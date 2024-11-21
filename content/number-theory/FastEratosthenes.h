@@ -1,39 +1,39 @@
 /**
- * Author: Jakob Kogler, chilli, pajenegod
- * Date: 2020-04-12
- * License: CC0
- * Description: Prime sieve for generating all primes smaller than LIM.
- * Time: LIM=1e9 $\approx$ 1.5s
- * Status: Stress-tested
- * Details: Despite its n log log n complexity, segmented sieve is still faster
- * than other options, including bitset sieves and linear sieves. This is
- * primarily due to its low memory usage, which reduces cache misses. This
- * implementation skips even numbers.
- *
- * Benchmark can be found here: https://ideone.com/e7TbX4
- *
- * The line `for (int i=idx; i<S+L; idx = (i += p))` is done on purpose for performance reasons.
- * Se https://github.com/kth-competitive-programming/kactl/pull/166#discussion_r408354338
+ * Author: Nima Naderi Ghotbodini
+ * Date: 2024-11-21
+ * Source: https://github.com/Nima-Naderi/Algonima/blob/master/NumberTheory/sieve.cpp
+ * Description: Prime sieve for generating all primes up to a certain limit.
+ * Status: Tested on codeforces
  */
 #pragma once
 
-const int LIM = 1e6;
-bitset<LIM> isPrime;
-vi eratosthenes() {
-	const int S = (int)round(sqrt(LIM)), R = LIM / 2;
-	vi pr = {2}, sieve(S+1); pr.reserve(int(LIM/log(LIM)*1.1));
-	vector<pii> cp;
-	for (int i = 3; i <= S; i += 2) if (!sieve[i]) {
-		cp.push_back({i, i * i / 2});
-		for (int j = i * i; j <= S; j += 2 * i) sieve[j] = 1;
+ll pt; vector<ll> lpf, Prm, prm;
+inline void Sieve(ll m){ //maximum value in inputs
+    lpf.assign(m + 1, 0);
+    for(int i = 2; i <= m; i ++){
+        if(!lpf[i]) Prm.push_back(lpf[i] = i);
+        for(int p : Prm){
+            if(p > lpf[i] || p * i > m) break;
+            lpf[p * i] = p;
+        }
+    }
+	pt = Prm.size();
+}
+inline void factorize(ll num){
+	prm.clear();
+    for(int x = num, p = lpf[x]; x > 1; prm.push_back(p), p = lpf[x]){
+        while(x % p == 0) x /= p;
+    }
+}
+inline void GetPresentPrimes(){
+	Prm.clear();
+	for(int i = 1; i <= n; i ++){
+		factorize(A[i]);
+		for(auto X : prm) Prm.push_back(X);
 	}
-	for (int L = 1; L <= R; L += S) {
-		array<bool, S> block{};
-		for (auto &[p, idx] : cp)
-			for (int i=idx; i < S+L; idx = (i+=p)) block[i-L] = 1;
-		rep(i,0,min(S, R - L))
-			if (!block[i]) pr.push_back((L + i) * 2 + 1);
-	}
-	for (int i : pr) isPrime[i] = 1;
-	return pr;
+	sort(Prm.begin(), Prm.end());
+    Prm.resize(pt = (unique(Prm.begin(), Prm.end()) - Prm.begin()));
+}
+inline int GetPrmId(ll x){
+    return lower_bound(Prm.begin(), Prm.end(), x) - Prm.begin() + 1;
 }
