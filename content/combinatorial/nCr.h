@@ -2,7 +2,7 @@
  * Author: Nima Naderi Ghotbodini
  * Date: 2024-11-21
  * Source: github.com/Nima-Naderi/Algonima/Combinatorics/nCr.cpp
- * Description: Computes  $\displaystyle \binom{n}{k}
+ * Description: Computes $\displaystyle \binom{n}{k}$.
  * Status: Tested on codeforces
  */
 #pragma once
