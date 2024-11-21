@@ -1,31 +1,28 @@
 /**
- * Author: Johan Sannemo, pajenegod
- * Date: 2015-02-06
- * License: CC0
- * Source: Folklore
- * Description: Range Minimum Queries on an array. Returns
- * min(V[a], V[a + 1], ... V[b - 1]) in constant time.
- * Usage:
- *  RMQ rmq(values);
- *  rmq.query(inclusive, exclusive);
- * Time: $O(|V| \log |V| + Q)$
- * Status: stress-tested
+ * Author: Nima Naderi Ghotbodini
+ * Date: 2024-11-21
+ * Source: https://github.com/Nima-Naderi/Algonima/blob/master/DataStructures/RMQ.cpp
+ * Description: Range Minimum Queries on an array (constant time).
+ * Status: tested on codeforces
  */
 #pragma once
 
-template<class T>
-struct RMQ {
-	vector<vector<T>> jmp;
-	RMQ(const vector<T>& V) : jmp(1, V) {
-		for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
-			jmp.emplace_back(sz(V) - pw * 2 + 1);
-			rep(j,0,sz(jmp[k]))
-				jmp[k][j] = min(jmp[k - 1][j], jmp[k - 1][j + pw]);
-		}
-	}
-	T query(int a, int b) {
-		assert(a < b); // or return inf if a == b
-		int dep = 31 - __builtin_clz(b - a);
-		return min(jmp[dep][a], jmp[dep][b - (1 << dep)]);
-	}
-};
+int rmq[LOG][MXN], lg[MXN];
+inline void BuildRmq(){
+    for(int i = 1; i <= n; i ++) rmq[0][i] = A[i];
+    for(int j = 1; j < LOG; j ++){
+        for(int i = 1; i <= n; i ++){
+            if(i < (1LL << j)) continue;
+            rmq[j][i] = max(rmq[j - 1][i], rmq[j - 1][i - (1LL << (j - 1))]);
+        }
+    }
+}
+inline int Max(int l, int r){
+    if(l == r) return rmq[0][l];
+    if(r < l) swap(l, r);
+    return max(rmq[lg[r - l + 1]][r], rmq[lg[r - l + 1]][l + (1LL << lg[r - l + 1]) - 1]);
+}
+inline void InitLog(){
+	for(int i = 0; (1LL << i) < MXN; i ++) lg[(1LL << i)] = i;
+	for(int i = 1; i < MXN; i ++)          lg[i] = max(lg[i - 1], lg[i]);
+} //Call InitLog() & BuildRmq();
