@@ -1,36 +1,42 @@
 /**
- * Author: chilli, pajenegod
- * Date: 2020-02-20
- * License: CC0
- * Source: Folklore
+ * Author: Nima Naderi Ghotbodini
+ * Date: 2024-11-21
+ * Source: https://github.com/Nima-Naderi/Algonima/blob/master/Graphs/lca.cpp
  * Description: Data structure for computing lowest common ancestors in a tree
- * (with 0 as root). C should be an adjacency list of the tree, either directed
- * or undirected.
  * Time: $O(N \log N + Q)$
- * Status: stress-tested
+ * Status: tested on codeforces
  */
 #pragma once
 
 #include "../data-structures/RMQ.h"
 
-struct LCA {
-	int T = 0;
-	vi time, path, ret;
-	RMQ<int> rmq;
-
-	LCA(vector<vi>& C) : time(sz(C)), rmq((dfs(C,0,-1), ret)) {}
-	void dfs(vector<vi>& C, int v, int par) {
-		time[v] = T++;
-		for (int y : C[v]) if (y != par) {
-			path.push_back(v), ret.push_back(time[v]);
-			dfs(C, y, v);
-		}
+ll Jad[LOG][MXN], dis[MXN];
+void prep(ll u, ll par){
+	Jad[0][u] = par;
+	for(int i = 1; i < LOG; i ++){
+		Jad[i][u] = Jad[i - 1][Jad[i - 1][u]];
 	}
-
-	int lca(int a, int b) {
-		if (a == b) return a;
-		tie(a, b) = minmax(time[a], time[b]);
-		return path[rmq.query(a, b)];
+	for(auto v : adj[u]){
+		if(v == par) continue;
+		dis[v] = dis[u] + 1;
+		prep(v, u);
 	}
-	//dist(a,b){return depth[a] + depth[b] - 2*depth[lca(a,b)];}
-};
+}
+ll K_Jad(ll u, ll k){
+	for(int i = 0; i < LOG; i ++){
+		if((k >> i) & 1LL) u = Jad[i][u];
+	}
+	return u;
+}
+ll LCA(ll u, ll v){
+	if(dis[v] < dis[u]) swap(u, v);
+	v = K_Jad(v, dis[v] - dis[u]);
+	if(u == v) return u;
+	for(int i = LOG - 1; ~i; i --){
+		if(Jad[i][u] != Jad[i][v]) u = Jad[i][u], v = Jad[i][v];
+	}
+	return Jad[0][u];
+}
+inline ll Distance(ll u, ll v){
+	return dis[u] + dis[v] - 2 * dis[LCA(u, v)];
+}
