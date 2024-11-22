@@ -1,8 +1,8 @@
 /**
- * Author: Simon Lindholm
- * Date: 2016-03-22
+ * Author: Simon Lindholm, Nima Naderi Ghotbodini
+ * Date: 2024-11-22
  * License: CC0
- * Source: hacKIT, NWERC 2015
+ * Source: hacKIT, NWERC 2015, Codeforces
  * Description: A set (not multiset!) with support for finding the n'th
  * element, and finding the index of an element.
  * To get a map, change \texttt{null\_type}.
@@ -16,6 +16,12 @@ using namespace __gnu_pbds;
 template<class T>
 using Tree = tree<T, null_type, less<T>, rb_tree_tag,
     tree_order_statistics_node_update>;
+
+//#include <ext/pb_ds/assoc_container.hpp>
+//#include <ext/pb_ds/tree_policy.hpp> //commented for ump
+#define ordered_setll tree<ll, null_type,less<ll>, rb_tree_tag,tree_order_statistics_node_update>
+template <typename T> using ordered_set =  tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+unordered_map<ll, tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update>> ump;
 
 void example() {
 	Tree<int> t, t2; t.insert(8);
