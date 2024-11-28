@@ -1,40 +1,71 @@
 /**
- * Author: Ulf Lundstrom
- * Date: 2009-08-03
- * License: CC0
- * Source: My head
+ * Author: Nima Naderi Ghotbodini
+ * Date: 2024-11-28
+ * Source: https://codeforces.com/contest/60/submission/84682398
  * Description: Basic operations on square matrices.
- * Usage: Matrix<int, 3> A;
- *  A.d = {{{{1,2,3}}, {{4,5,6}}, {{7,8,9}}}};
- *  vector<int> vec = {1,2,3};
- *  vec = (A^N) * vec;
- * Status: tested
+ * Usage: Matrix M = Matrix(2, 1)
+ *  MAX.M[1][0]
+ * Status: Tested on codeforces
  */
 #pragma once
 
-template<class T, int N> struct Matrix {
-	typedef Matrix M;
-	array<array<T, N>, N> d{};
-	M operator*(const M& m) const {
-		M a;
-		rep(i,0,N) rep(j,0,N)
-			rep(k,0,N) a.d[i][j] += d[i][k]*m.d[k][j];
-		return a;
-	}
-	vector<T> operator*(const vector<T>& vec) const {
-		vector<T> ret(N);
-		rep(i,0,N) rep(j,0,N) ret[i] += d[i][j] * vec[j];
-		return ret;
-	}
-	M operator^(ll p) const {
-		assert(p >= 0);
-		M a, b(*this);
-		rep(i,0,N) a.d[i][i] = 1;
-		while (p) {
-			if (p&1) a = a*b;
-			b = b*b;
-			p >>= 1;
+const ll MXZ = 100 + 10;
+struct Matrix{
+    int n, m; ll M[MXZ][MXZ];
+    Matrix(int _n, int _m, ll num = 0){
+        n = _n, m = _m;
+        if(num == -1)
+            for(int i = 0; i < n; i ++)
+                for(int j = 0; j < m; j ++) M[i][j] = (i == j);
+        else
+            for(int i = 0; i < n; i ++)
+                for(int j = 0; j < m; j ++) M[i][j] = num;
+    }
+    void Print(bool f = 0){
+        cerr << "=======N.N=======\n";
+        if(f) cerr << "Size : " << n << ' ' << m << '\n';
+        for(int i = 0; i < n; i ++, cerr << '\n'){
+            for(int j = 0; j < m; j ++) cerr << M[i][j] << ' ';
+        }
+        cerr << "=======N.N=======\n";
+    }
+    Matrix operator + (const Matrix &T){
+        Matrix R = Matrix(n, m);
+        for(int i = 0; i < n; i ++)
+            for(int j = 0; j < m; j ++)
+                R.M[i][j] = (M[i][j] + T.M[i][j]) % Mod;
+		return R;
+    }
+    Matrix operator * (const Matrix &T){
+        Matrix R = Matrix(n, T.m);
+        if(m != T.n){
+			cerr << "Cannot * Matrices !" << '\n'; return R;
 		}
-		return a;
+        for(int i = 0; i < n; i ++){
+            for(int j = 0; j < T.m; j ++){
+                for(int k = 0; k < m; k ++){
+                    ll now = (Ok(M[i][k]) * Ok(T.M[k][j])) % Mod;
+                    R.M[i][j] = (R.M[i][j] + now) % Mod;
+                }
+            }
+        }
+        return R;
+    }
+    Matrix operator ^ (const ll t){
+		Matrix R = Matrix(n, m, -1);
+		if(n != m){
+			cerr << "Cannot ^ Matrice with n != m !" << '\n'; return R;
+		}
+		if(t == 0) return R;
+		Matrix T = Matrix(n, m);
+        for(int i = 0; i < n; i ++)
+            for(int j = 0; j < m; j ++)
+                T.M[i][j] = M[i][j];
+		ll p = t;
+		while(p){
+			if(p & 1LL) R = R * T;
+			T = (T * T), p /= 2;
+		}
+		return R;
 	}
 };
