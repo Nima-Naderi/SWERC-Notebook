@@ -31,9 +31,10 @@ struct Point {
 	P unit() const { return *this/dist(); } // makes dist()=1
 	P perp() const { return P(-y, x); } // rotates +90 degrees
 	P normal() const { return perp().unit(); }
-	// returns point rotated 'a' radians ccw around the origin
-	P rotate(double a) const {
-		return P(x*cos(a)-y*sin(a),x*sin(a)+y*cos(a)); }
+	pt _rot(pt p, double a) const { // helper
+		return pt(p.x*cos(a)-p.y*sin(a),p.x*sin(a)+p.y*cos(a)); }
+	// returns point rotated 'a' radians ccw around origin 'r'
+	pt rotate(double a, pt r) { return r + _rot(*this-r,a); }
 	friend ostream& operator<<(ostream& os, P p) {
 		return os << "(" << p.x << "," << p.y << ")"; }
 };
