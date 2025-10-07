@@ -12,9 +12,8 @@
 
 // #include <bits/extc++.h> /// include-line, keep-include
 
-const double INF = numeric_limits<ll>::max() / 4;
-
 typedef double EDGE_W;
+const EDGE_W INF = numeric_limits<EDGE_W>::max() / 4;
 struct MCMF { 
     struct edge {
         int from, to, rev;
