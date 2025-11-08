@@ -12,7 +12,7 @@
 #include "Point.h"
 
 // projection of point p on line ax + by + c = 0
-template<class P> P projOnLine(P p, double a, double b, double c) {
+template<class P> P projOnLine(P p, dbl a, dbl b, dbl c) {
 	double d = (a * p.x + b * p.y + c) / (a*a + b*b);
 	return {p.x - a * d, p.y - b * d};
 }

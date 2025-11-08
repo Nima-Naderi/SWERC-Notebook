@@ -8,12 +8,12 @@
  */
 #pragma once
 
-// smaller angle in B in radians [0, π)
+// smaller angle in B in radians [0, pi)
 const double PI = acos(-1.0);
 template<class P> double angle3pt(P a, P b, P c) {
 	double dotp = (a-b).dot(c-b);
 	double crsp = (a-b).cross(c-b);
-	return fabs(atan2(crsp, dotp)); // [0, π]
+	return fabs(atan2(crsp, dotp)); // [0, pi]
 }
 // comparator sorting angles ccw wrt to (0,0)
 template <class P> bool half(const P &p) { 
