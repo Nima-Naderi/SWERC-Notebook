@@ -1,21 +1,29 @@
 /**
- * Author: Victor Lecomte, chilli
- * Date: 2019-10-29
+ * Author: Pasquale Bianco (whiitex)
+ * Date: 2025-11-08
  * License: CC0
- * Source: https://vlecomte.github.io/cp-geo.pdf
  * Description: Projects point p onto line ab. Set refl=true to get reflection
- * of point p across line ab instead. The wrong point will be returned if P is
- * an integer point and the desired point doesn't have integer coordinates.
- * Products of three coordinates are used in intermediate steps so watch out
- * for overflow.
- * Status: stress-tested
+ * of point p across line ab instead. Products of three coordinates are used 
+ * in intermediate steps so watch out for overflow.
+ * Status: used, works well
  */
 #pragma once
 
 #include "Point.h"
 
-template<class P>
-P lineProj(P a, P b, P p, bool refl=false) {
-	P v = b - a;
-	return p - v.perp()*(1+refl)*v.cross(p-a)/v.dist2();
+// projection of point p on line ax + by + c = 0
+template<class P> P projOnLine(P p, double a, double b, double c) {
+	double d = (a * p.x + b * p.y + c) / (a*a + b*b);
+	return {p.x - a * d, p.y - b * d};
+}
+// projection of point p on line defined by points a and b
+template<class P> P projOnLine(P p, P a, P b) {
+	P ab = b - a;
+	double t = (p - a).dot(b-a) / ab.dot(b-a);
+	return a + ab * t;
+}
+// reflection of point p over line defined by points a and b
+template<class P> P reflectOverLine(P p, P a, P b) {
+    P proj = projOnLine(p, a, b);
+    return proj * 2 - p;
 }
