@@ -6,6 +6,9 @@
  * Description: Flow algorithm with complexity $O(VE\log U)$ where $U = \max |\text{cap}|$.
  * $O(\min(E^{1/2}, V^{2/3})E)$ if $U = 1$; $O(\sqrt{V}E)$ for bipartite matching.
  * Status: Tested on SPOJ FASTFLOW and SPOJ MATCHING, stress-tested
+ *
+ * König's theorem: maximum matching = minimum vertex cover in bipartite graph
+ * For any graph (V, E): (maximum) independent set = V \ (minimum) vertex cover
  */
 #pragma once
 
