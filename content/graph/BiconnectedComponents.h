@@ -1,54 +1,54 @@
 /**
- * Author: Simon Lindholm
- * Date: 2017-04-17
- * License: CC0
- * Source: folklore
- * Description: Finds all biconnected components in an undirected graph, and
- *  runs a callback for the edges in each. In a biconnected component there
- *  are at least two distinct paths between any two nodes. Note that a node can
- *  be in several components. An edge which is not in a component is a bridge,
- *  i.e., not part of any cycle.
- * Usage:
- *  int eid = 0; ed.resize(N);
- *  for each edge (a,b) {
- *    ed[a].emplace_back(b, eid);
- *    ed[b].emplace_back(a, eid++); }
- *  bicomps([\&](const vi\& edgelist) {...});
- * Time: O(E + V)
- * Status: tested during MIPT ICPC Workshop 2017
+ * finds biconnected components (connected after vertex removal)
  */
-#pragma once
+const int N = 5e5 + 1;
 
-vi num, st;
-vector<vector<pii>> ed;
-int Time;
-template<class F>
-int dfs(int at, int par, F& f) {
-	int me = num[at] = ++Time, e, y, top = me;
-	for (auto pa : ed[at]) if (pa.second != par) {
-		tie(y, e) = pa;
-		if (num[y]) {
-			top = min(top, num[y]);
-			if (num[y] < me)
-				st.push_back(e);
-		} else {
-			int si = sz(st);
-			int up = dfs(y, e, f);
-			top = min(top, up);
-			if (up == me) {
-				st.push_back(e);
-				f(vi(st.begin() + si, st.end()));
-				st.resize(si);
-			}
-			else if (up < me) st.push_back(e);
-			else { /* e is a bridge */ }
-		}
-	}
-	return top;
+bitset<N> arti; 
+vector<int> g[N], st, comp[N]; 
+int n, ptr, ncc, in[N], low[N], id[N];
+
+void dfs(int u, int from = -1) {
+    in[u] = low[u] = ++ptr;
+    st.emplace_back(u);
+    for (int v : g[u]) if (v ^ from) {
+        if (!in[v]) {
+            dfs(v, u);
+            low[u] = min(low[u], low[v]);
+            if (low[v] >= in[u]) {
+                arti[u] = ~from or in[v] > in[u] + 1;
+                comp[++ncc].emplace_back(u);
+                while (comp[ncc].back() ^ v) {
+                    comp[ncc].emplace_back(st.back());
+                    st.pop_back();
+                }
+            } 
+        } 
+		else low[u] = min(low[u], in[v]);
+    }
 }
 
-template<class F>
-void bicomps(F f) {
-	num.assign(sz(ed), 0);
-	rep(i,0,sz(ed)) if (!num[i]) dfs(i, -1, f);
+void bcc() {
+    for (int i = 0; i < n; i++) {
+        if (!in[i]) {
+            dfs(i);
+            if (g[i].empty()) comp[++ncc].push_back(i); // COMPS NUMBERED 1..ncc INCLUDED
+        }
+    }
 }
+
+// BLOCK CUT TREE
+// vector<int>  tree[N]; 
+// void buildTree() {
+//     ptr = 0;
+//     for (int i = 0; i < n; ++i) { // index nodes properly here
+//         if (arti[i]) id[i] = ++ptr;
+//     }
+//     for (int i = 1; i <= ncc; ++i) {
+//         int x = ++ptr;
+//         for (int u : comp[i]) {
+//             if (arti[u]) tree[x].emplace_back(id[u]), tree[id[u]].emplace_back(x);
+//             else id[u] = x;
+//         }
+//     }
+// }
+
