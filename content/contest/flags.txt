@@ -1,0 +1,4 @@
+// useful g++ flags
+// Wshadow for variable shadowing warning, _GLIBCXX_ASSERTIONS for OOB/bad iterator errors
+
+-Wall -Wextra -Wshadow -D_GLIBCXX_DEBUG -D_GLIBCXX_ASSERTIONS -fdiagnostics-color=always
