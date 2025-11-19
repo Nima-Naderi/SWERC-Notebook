@@ -1,4 +1,9 @@
-// does dfs to find bridges, then removes them and does dfs to find 2CCs
+/**
+ * Author: Jiakai Hu
+ * Date: 2025-11-19
+ * Description: does dfs to find bridges, then removes them and does dfs to find 2CCs
+ */
+#pragma once
 
 struct LowLink{
     int n, pos = 0;

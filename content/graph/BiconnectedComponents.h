@@ -1,6 +1,10 @@
 /**
- * finds biconnected components (connected after vertex removal)
+ * Author: Jiakai Hu
+ * Date: 2025-11-19
+ * Description: finds biconnected components (connected after vertex removal)
  */
+#pragma once
+
 const int N = 5e5 + 1;
 
 bitset<N> arti; 
