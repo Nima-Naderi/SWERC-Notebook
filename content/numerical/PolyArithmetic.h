@@ -2,7 +2,7 @@
  * Author: kyooz
  * Date: 2025-11-19
  * Source: jiangly submissions
- * Inputs must be in [0, mod).
+ * Description: Inputs must be in [0, mod).
  * Time: O(N \log N) for more complex operations (high constant), O(N) for simple operations
  * Status: tested on yosupo inv, log, exp, pow
  */
