@@ -1,7 +1,8 @@
 /**
- * Author: Nima Naderi Ghotbodini
- * Date: 2024-11-21
- * Source: https://github.com/Nima-Naderi/Algonima/blob/master/FFT/ntt.cpp
+ * Author: chilli
+ * Date: 2019-04-16
+ * License: CC0
+ * Source: based on KACTL's FFT
  * Description: ntt(a) computes $\hat f(k) = \sum_x a[x] g^{xk}$ for all $k$, where $g=\text{root}^{(mod-1)/N}$.
  * N must be a power of 2.
  * Useful for convolution modulo specific nice primes of the form $2^a b+1$,
@@ -11,7 +12,7 @@
    pointwise, divide by n, reverse(start+1, end), NTT back.
  * Inputs must be in [0, mod).
  * Time: O(N \log N)
- * Status: tested on CodeForces
+ * Status: stress-tested
  */
 #pragma once
 
@@ -20,26 +21,33 @@
 const ll mod = (119 << 23) + 1, root = 62; // = 998244353
 // For p < 2^30 there is also e.g. 5 << 25, 7 << 26, 479 << 21
 // and 483 << 21 (same root). The last two are > 10^9.
-ll rev[MXF];
-const ll iMXF = inv(MXF);
-void NTT(ll *A, bool inverse = 0){
-	for(int i = 1; i < MXF; i ++){
-		rev[i] = ((rev[i >> 1] >> 1) | ((i & 1) << (LOG - 1)));
-		if(rev[i] < i) swap(A[i], A[rev[i]]);
+typedef vector<ll> vl;
+void ntt(vl &a) {
+	int n = sz(a), L = 31 - __builtin_clz(n);
+	static vl rt(2, 1);
+	for (static int k = 2, s = 2; k < n; k *= 2, s++) {
+		rt.resize(n);
+		ll z[] = {1, modpow(root, mod >> s)};
+		rep(i,k,2*k) rt[i] = rt[i / 2] * z[i & 1] % mod;
 	}
-	for(int l = 1; l < MXF; l <<= 1){
-		ll wn = power(3, Mod / 2 / l); // 3 or 5
-		if(inverse) wn = inv(wn);
-		for(int i = 0; i < MXF; i += (l << 1)){
-			ll w = 1;
-			for(int j = i; j < i + l; j ++){
-				ll v = A[j], u = w * A[j + l] % Mod;
-				mkay(A[j] = u + v);
-				mkay(A[j + l] = v - u);
-				w = w * wn % Mod;
-			}
+	vi rev(n);
+	rep(i,0,n) rev[i] = (rev[i / 2] | (i & 1) << L) / 2;
+	rep(i,0,n) if (i < rev[i]) swap(a[i], a[rev[i]]);
+	for (int k = 1; k < n; k *= 2)
+		for (int i = 0; i < n; i += 2 * k) rep(j,0,k) {
+			ll z = rt[j + k] * a[i + j + k] % mod, &ai = a[i + j];
+			a[i + j + k] = ai - z + (z > ai ? mod : 0);
+			ai += (ai + z >= mod ? z - mod : z);
 		}
-	}
-	if(!inverse) return;
-	for(int i = 0; i < MXF; i ++) A[i] = A[i] * iMXF % Mod;
+}
+vl conv(const vl &a, const vl &b) {
+	if (a.empty() || b.empty()) return {};
+	int s = sz(a) + sz(b) - 1, B = 32 - __builtin_clz(s), n = 1 << B;
+	int inv = modpow(n, mod - 2);
+	vl L(a), R(b), out(n);
+	L.resize(n), R.resize(n);
+	ntt(L), ntt(R);
+	rep(i,0,n) out[-i & (n - 1)] = (ll)L[i] * R[i] % mod * inv % mod;
+	ntt(out);
+	return {out.begin(), out.begin() + s};
 }
