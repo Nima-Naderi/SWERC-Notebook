@@ -69,3 +69,8 @@ struct Matrix{
 		return R;
 	}
 };
+ll Fib(ll t){
+    if(t == 1) return 1; Matrix M(2, 1), C(2, 2, 1);
+    M.M[0][0] = M.M[1][0] = 1; C.M[1][1] = 0;
+    C = (C ^ (t - 2)); M = (C * M); return M.M[0][0];
+}

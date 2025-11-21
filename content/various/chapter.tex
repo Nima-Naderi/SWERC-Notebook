@@ -27,9 +27,9 @@
 	\subsection{Bit hacks}
 		\begin{itemize}
 			\item \verb@x & -x@ is the least bit in \texttt{x}.
-			\item \verb@for (int x = m; x; ) { --x &= m; ... }@ loops over all subset masks of \texttt{m} (except \texttt{m} itself).
+			\item \verb@for (int x = m; x; ) { --x &= m; ... }@ \\ \verb@for(sub=mask; ;sub = (sub-1)&mask){@ \\  \verb@ //[Update] if(sub == 0) break; }@\\ loops over all subset masks of \texttt{m} (except \texttt{m} itself).
 			\item \verb@c = x&-x, r = x+c; (((r^x) >> 2)/c) | r@ is the next number after \texttt{x} with the same number of bits set.
-			\item \verb@rep(b,0,K) rep(i,0,(1 << K))@ \\ \verb@  if (i & 1 << b) D[i] += D[i^(1 << b)];@ computes all sums of subsets.
+			\item \verb@rep(b,0,K) rep(i,0,(1 << K))@ \\ \verb@  if (i & 1 << b) D[i] += D[i^(1 << b)];@ \\ \verb@ for(j = 0; j < MXN;){for(mask = 0; mask < MXM){@ \\ \verb@if(bit(mask, j)) dp[mask^(1<<j)]+=dp[mask];} } @ \\ computes all sums of subsets.
 		\end{itemize}
 	\subsection{Pragmas}
 		\begin{itemize}
